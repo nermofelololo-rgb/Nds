@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}المبيعات - نيو دنت{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">فواتير المبيعات</h4>
+    <a href="/sales/new" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> فاتورة جديدة
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>رقم الفاتورة</th>
+                    <th>العميل</th>
+                    <th>الإجمالي</th>
+                    <th>طريقة الدفع</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in invoices %}
+                <tr>
+                    <td><a href="/sales/{{ inv.id }}"><strong>{{ inv.invoice_number }}</strong></a></td>
+                    <td>{{ inv.customer.name if inv.customer else 'عميل نقدي' }}</td>
+                    <td>{{ inv.total_amount }} ج.م</td>
+                    <td>{{ inv.payment_method }}</td>
+                    <td>{{ inv.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">لا توجد فواتير بعد</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

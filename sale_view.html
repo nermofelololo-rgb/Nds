@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}فاتورة {{ invoice.invoice_number }} - نيو دنت{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <h4 class="mb-0">فاتورة مبيعات</h4>
+    <div>
+        <button onclick="window.print()" class="btn btn-outline-primary"><i class="bi bi-printer"></i> طباعة</button>
+        <a href="/sales" class="btn btn-secondary">رجوع</a>
+    </div>
+</div>
+
+<div class="card" id="invoicePrint">
+    <div class="card-body">
+        <div class="text-center mb-4">
+            <h3 style="color:#0d7377;">نيو دنت — NDS</h3>
+            <p class="mb-0">مستلزمات طب الأسنان</p>
+            <small>بني مزار - المنيا - أبو قرقاص</small>
+        </div>
+        <hr>
+        <div class="row mb-3">
+            <div class="col-6">
+                <strong>رقم الفاتورة:</strong> {{ invoice.invoice_number }}<br>
+                <strong>التاريخ:</strong> {{ invoice.created_at.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+            <div class="col-6 text-start">
+                <strong>العميل:</strong> {{ invoice.customer.name if invoice.customer else 'عميل نقدي' }}<br>
+                <strong>طريقة الدفع:</strong> {{ invoice.payment_method }}
+            </div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>المنتج</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in invoice.items %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_price }}</td>
+                    <td>{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-start">الإجمالي</th>
+                    <th>{{ invoice.total_amount }} ج.م</th>
+                </tr>
+            </tfoot>
+        </table>
+
+        {% if invoice.notes %}
+        <p><strong>ملاحظات:</strong> {{ invoice.notes }}</p>
+        {% endif %}
+
+        <div class="text-center mt-4 text-muted">
+            <small>شكراً لتعاملكم مع نيو دنت</small>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .sidebar, .no-print, .main-content > .d-flex { display: none !important; }
+    .main-content { margin: 0 !important; padding: 0 !important; }
+    .card { box-shadow: none !important; border: 1px solid #ddd; }
+}
+</style>
+{% endblock %}

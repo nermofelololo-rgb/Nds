@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}فاتورة مبيعات جديدة - نيو دنت{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">فاتورة مبيعات جديدة</h4>
+
+<form method="post" action="/sales/create" id="saleForm">
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">العميل</label>
+                    <select name="customer_id" class="form-select">
+                        <option value="">عميل نقدي</option>
+                        {% for c in customers %}
+                        <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">طريقة الدفع</label>
+                    <select name="payment_method" class="form-select">
+                        <option value="نقدي">نقدي</option>
+                        <option value="آجل">آجل</option>
+                        <option value="تحويل">تحويل</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">ملاحظات</label>
+                    <input type="text" name="notes" class="form-control">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between">
+            <span>أصناف الفاتورة</span>
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addRow()">+ إضافة صنف</button>
+        </div>
+        <div class="card-body p-0">
+            <table class="table mb-0" id="itemsTable">
+                <thead>
+                    <tr>
+                        <th style="width:45%">المنتج</th>
+                        <th style="width:15%">الكمية</th>
+                        <th style="width:20%">سعر الوحدة</th>
+                        <th style="width:15%">الإجمالي</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody">
+                    <tr>
+                        <td>
+                            <select name="product_id" class="form-select product-select" required onchange="updatePrice(this)">
+                                <option value="">اختر منتج...</option>
+                                {% for p in products %}
+                                <option value="{{ p.id }}" data-price="{{ p.sell_price }}" data-stock="{{ p.stock_qty }}">
+                                    {{ p.name }} (متوفر: {{ p.stock_qty }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="number" name="quantity" class="form-control qty" value="1" min="0.01" step="0.01" onchange="calcRow(this)" required></td>
+                        <td><input type="number" name="unit_price" class="form-control price" step="0.01" onchange="calcRow(this)" required></td>
+                        <td class="row-total">0</td>
+                        <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); calcTotal()">×</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h5>الإجمالي: <span id="grandTotal">0</span> ج.م</h5>
+        <div>
+            <a href="/sales" class="btn btn-secondary">إلغاء</a>
+            <button type="submit" class="btn btn-primary">حفظ الفاتورة</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updatePrice(select) {
+    const opt = select.options[select.selectedIndex];
+    const price = opt.dataset.price || 0;
+    const row = select.closest('tr');
+    row.querySelector('.price').value = price;
+    calcRow(select);
+}
+function calcRow(el) {
+    const row = el.closest('tr');
+    const qty = parseFloat(row.querySelector('.qty').value) || 0;
+    const price = parseFloat(row.querySelector('.price').value) || 0;
+    row.querySelector('.row-total').textContent = (qty * price).toFixed(2);
+    calcTotal();
+}
+function calcTotal() {
+    let total = 0;
+    document.querySelectorAll('.row-total').forEach(el => total += parseFloat(el.textContent) || 0);
+    document.getElementById('grandTotal').textContent = total.toFixed(2);
+}
+function addRow() {
+    const tbody = document.getElementById('itemsBody');
+    const first = tbody.querySelector('tr');
+    const clone = first.cloneNode(true);
+    clone.querySelectorAll('input').forEach(i => i.value = i.name === 'quantity' ? 1 : '');
+    clone.querySelector('.row-total').textContent = '0';
+    tbody.appendChild(clone);
+}
+</script>
+{% endblock %}

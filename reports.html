@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}التقارير - نيو دنت{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">التقارير</h4>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-danger">
+                <i class="bi bi-exclamation-triangle"></i> منتجات تحتاج إعادة طلب
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>المنتج</th>
+                            <th>الرصيد</th>
+                            <th>الحد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in low_stock %}
+                        <tr>
+                            <td>{{ p.name }}</td>
+                            <td><span class="badge text-bg-danger">{{ p.stock_qty }}</span></td>
+                            <td>{{ p.min_stock }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" class="text-center text-muted">لا يوجد</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-trophy"></i> أكثر المنتجات مبيعاً
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>المنتج</th>
+                            <th>الكمية المباعة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, qty in top_products %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ qty }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="2" class="text-center text-muted">لا توجد مبيعات بعد</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
