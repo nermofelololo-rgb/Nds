@@ -1,0 +1,2807 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d7377">
+<title>نيو دنت - نظام المحاسبة</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #0d7377;
+  --primary-dark: #095456;
+  --primary-light: #14919b;
+  --danger: #dc3545;
+  --success: #198754;
+  --bg: #f0f4f5;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  margin: 0;
+  padding-bottom: 70px;
+  min-height: 100vh;
+}
+.navbar-custom {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.navbar-custom h5 { margin: 0; font-weight: 700; }
+.stat-card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  border-right: 4px solid var(--primary);
+  margin-bottom: 12px;
+}
+.stat-card h3 { color: var(--primary); font-weight: 700; margin: 0; font-size: 1.6rem; }
+.stat-card p { color: #666; margin: 4px 0 0; font-size: 0.9rem; }
+.stat-card.danger { border-color: var(--danger); }
+.stat-card.danger h3 { color: var(--danger); }
+.stat-card.success { border-color: var(--success); }
+.stat-card.success h3 { color: var(--success); }
+.card-custom {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.card-custom .card-header {
+  background: white;
+  border-bottom: 1px solid #eee;
+  padding: 14px 16px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.btn-primary:hover, .btn-primary:active {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  z-index: 1000;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+}
+.bottom-nav a {
+  text-align: center;
+  color: #888;
+  text-decoration: none;
+  font-size: 0.7rem;
+  flex: 1;
+  padding: 4px;
+}
+.bottom-nav a.active { color: var(--primary); font-weight: 600; }
+.bottom-nav a i { display: block; font-size: 1.35rem; margin-bottom: 2px; }
+.page { display: none; padding: 16px; }
+.page.active { display: block; }
+.table-sm td, .table-sm th { vertical-align: middle; font-size: 0.9rem; }
+.badge-stock-ok { background: var(--success); }
+.badge-stock-low { background: var(--danger); }
+.login-screen {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--primary), var(--primary-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.login-box {
+  background: white;
+  border-radius: 20px;
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+.login-box h3 { color: var(--primary); font-weight: 700; text-align: center; }
+.product-item, .invoice-item {
+  background: white;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.search-box {
+  position: sticky;
+  top: 56px;
+  z-index: 50;
+  background: var(--bg);
+  padding: 10px 0;
+}
+.modal-content { border-radius: 16px; }
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(13,115,119,0.2);
+}
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+.empty-state i { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+#toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  min-width: 200px;
+  text-align: center;
+}
+.invoice-row { border-bottom: 1px solid #f0f0f0; padding: 10px 0; }
+.price { color: var(--primary); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ========== شاشة تسجيل الدخول ========== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h3>نيو دنت</h3>
+    <p class="text-center text-muted mb-4">نظام المحاسبة والمخزون</p>
+    <div id="loginError" class="alert alert-danger d-none py-2"></div>
+    <div class="mb-3">
+      <label class="form-label">اسم المستخدم</label>
+      <input type="text" id="loginUser" class="form-control form-control-lg" value="admin" placeholder="admin">
+    </div>
+    <div class="mb-4">
+      <label class="form-label">كلمة المرور</label>
+      <input type="password" id="loginPass" class="form-control form-control-lg" value="admin123" placeholder="••••••">
+    </div>
+    <button class="btn btn-primary btn-lg w-100" onclick="doLogin()">دخول</button>
+    <p class="text-center text-muted mt-3 mb-0" style="font-size:12px">admin / admin123</p>
+  </div>
+</div>
+
+<!-- ========== التطبيق الرئيسي ========== -->
+<div id="app" style="display:none">
+  <!-- Navbar -->
+  <div class="navbar-custom d-flex justify-content-between align-items-center">
+    <h5 id="pageTitle">الرئيسية</h5>
+    <div>
+      <span id="userLabel" class="me-2" style="font-size:0.85rem;opacity:0.9"></span>
+      <button class="btn btn-sm btn-outline-light" onclick="doLogout()"><i class="bi bi-box-arrow-left"></i></button>
+    </div>
+  </div>
+
+  <!-- الصفحات -->
+  <div id="page-dashboard" class="page active">
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <div class="stat-card">
+          <h3 id="statProducts">0</h3>
+          <p><i class="bi bi-box-seam"></i> المنتجات</p>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="stat-card danger">
+          <h3 id="statLowStock">0</h3>
+          <p><i class="bi bi-exclamation-triangle"></i> مخزون ناقص</p>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="stat-card" style="border-color:#0d6efd">
+          <h3 id="statCustomers" style="color:#0d6efd">0</h3>
+          <p><i class="bi bi-people"></i> العملاء</p>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="stat-card success">
+          <h3 id="statTodaySales">0</h3>
+          <p><i class="bi bi-receipt"></i> مبيعات اليوم</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-custom">
+      <div class="card-header"><i class="bi bi-exclamation-triangle text-danger"></i> منتجات تحتاج إعادة طلب</div>
+      <div class="p-3" id="lowStockList"></div>
+    </div>
+  </div>
+
+  <!-- المنتجات -->
+  <div id="page-products" class="page">
+    <div class="search-box">
+      <div class="input-group">
+        <input type="text" id="productSearch" class="form-control" placeholder="بحث عن منتج..." oninput="renderProducts()">
+        <button class="btn btn-primary" onclick="openProductModal()"><i class="bi bi-plus-lg"></i></button>
+      </div>
+    </div>
+    <div id="productsList"></div>
+  </div>
+
+  <!-- المخزون -->
+  <div id="page-inventory" class="page">
+    <div class="card-custom mb-3">
+      <div class="card-header">تعديل رصيد</div>
+      <div class="p-3">
+        <select id="invProduct" class="form-select mb-2"></select>
+        <div class="row g-2">
+          <div class="col-4">
+            <select id="invType" class="form-select">
+              <option value="in">وارد +</option>
+              <option value="out">صادر -</option>
+              <option value="set">تعيين</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <input type="number" id="invQty" class="form-control" placeholder="الكمية" step="0.01">
+          </div>
+          <div class="col-4">
+            <button class="btn btn-primary w-100" onclick="adjustStock()">تنفيذ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="inventoryList"></div>
+  </div>
+
+  <!-- المبيعات -->
+  <div id="page-sales" class="page">
+    <button class="btn btn-primary w-100 mb-3" onclick="openSaleModal()">
+      <i class="bi bi-plus-lg"></i> فاتورة مبيعات جديدة
+    </button>
+    <div id="salesList"></div>
+  </div>
+
+  <!-- العملاء -->
+  <div id="page-customers" class="page">
+    <button class="btn btn-primary w-100 mb-3" onclick="openCustomerModal()">
+      <i class="bi bi-plus-lg"></i> إضافة عميل
+    </button>
+    <div id="customersList"></div>
+  </div>
+
+  <!-- المشتريات -->
+  <div id="page-purchases" class="page">
+    <button class="btn btn-primary w-100 mb-3" onclick="openPurchaseModal()">
+      <i class="bi bi-plus-lg"></i> فاتورة شراء جديدة
+    </button>
+    <div id="purchasesList"></div>
+  </div>
+
+  <!-- التقارير -->
+  <!-- المصروفات -->
+  <div id="page-expenses" class="page">
+    <button class="btn btn-primary w-100 mb-3" onclick="openExpenseModal()">
+      <i class="bi bi-plus-lg"></i> إضافة مصروف
+    </button>
+    <div id="expensesList"></div>
+  </div>
+
+  <div id="page-reports" class="page">
+    <div class="card-custom mb-3">
+      <div class="card-header">اختصارات</div>
+      <div class="p-3 d-grid gap-2">
+        <button class="btn btn-outline-primary" onclick="showPage('inventory')"><i class="bi bi-boxes"></i> إدارة المخزون</button>
+        <button class="btn btn-outline-primary" onclick="showPage('customers')"><i class="bi bi-people"></i> العملاء والمديونيات</button>
+      </div>
+    </div>
+    <div class="card-custom mb-3">
+      <div class="card-header"><i class="bi bi-funnel"></i> فترة التقرير</div>
+      <div class="p-3">
+        <select id="reportPeriod" class="form-select" onchange="renderReports()">
+          <option value="all">كل الفترات</option>
+          <option value="today">اليوم</option>
+          <option value="month">هذا الشهر</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-custom mb-3">
+      <div class="card-header"><i class="bi bi-cash-stack"></i> الأرباح والخسائر</div>
+      <div class="p-3" id="reportProfit"></div>
+    </div>
+    <div class="card-custom mb-3">
+      <div class="card-header text-danger"><i class="bi bi-exclamation-triangle"></i> مخزون ناقص</div>
+      <div class="p-3" id="reportLowStock"></div>
+    </div>
+    <div class="card-custom mb-3">
+      <div class="card-header"><i class="bi bi-graph-up"></i> ملخص المبيعات</div>
+      <div class="p-3" id="reportSales"></div>
+    </div>
+    <div class="card-custom">
+      <div class="card-header"><i class="bi bi-cloud-download"></i> النسخ الاحتياطي</div>
+      <div class="p-3">
+        <button class="btn btn-outline-primary w-100 mb-2" onclick="exportBackup()"><i class="bi bi-download"></i> تصدير نسخة احتياطية</button>
+        <label class="btn btn-outline-secondary w-100 mb-2">
+          <i class="bi bi-upload"></i> استيراد نسخة احتياطية
+          <input type="file" accept=".json" onchange="importBackup(event)" hidden>
+        </label>
+        <button class="btn btn-outline-danger w-100" onclick="resetAllData()"><i class="bi bi-trash"></i> مسح كل البيانات وإعادة التعيين</button>
+        <p class="text-muted mt-2 mb-0" style="font-size:0.8rem">احفظ نسخة دورياً عشان بياناتك متضيعش</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="#" class="active" data-page="dashboard" onclick="showPage('dashboard')"><i class="bi bi-house"></i>رئيسية</a>
+    <a href="#" data-page="products" onclick="showPage('products')"><i class="bi bi-box-seam"></i>منتجات</a>
+    <a href="#" data-page="sales" onclick="showPage('sales')"><i class="bi bi-receipt"></i>مبيعات</a>
+    <a href="#" data-page="purchases" onclick="showPage('purchases')"><i class="bi bi-cart-plus"></i>شراء</a>
+    <a href="#" data-page="expenses" onclick="showPage('expenses')"><i class="bi bi-wallet2"></i>مصروف</a>
+    <a href="#" data-page="reports" onclick="showPage('reports')"><i class="bi bi-graph-up"></i>المزيد</a>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast align-items-center text-bg-dark border-0" role="alert">
+  <div class="d-flex">
+    <div class="toast-body" id="toastMsg"></div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+  </div>
+</div>
+
+<!-- Modal منتج -->
+<div class="modal fade" id="productModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productModalTitle">إضافة منتج</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editProductId">
+        <div class="mb-3">
+          <label class="form-label">اسم المنتج *</label>
+          <input type="text" id="pName" class="form-control" required>
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label">سعر التكلفة</label>
+            <input type="number" id="pCost" class="form-control" value="0" step="0.01">
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label">سعر البيع *</label>
+            <input type="number" id="pPrice" class="form-control" value="0" step="0.01">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label">الرصيد</label>
+            <input type="number" id="pStock" class="form-control" value="0" step="0.01">
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label">حد الطلب</label>
+            <input type="number" id="pMin" class="form-control" value="5" step="0.01">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">الوحدة</label>
+          <input type="text" id="pUnit" class="form-control" value="قطعة">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveProduct()">حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal عميل -->
+<div class="modal fade" id="customerModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">إضافة عميل</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">اسم العيادة / العميل *</label>
+          <input type="text" id="cName" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">الهاتف</label>
+          <input type="text" id="cPhone" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">العنوان</label>
+          <input type="text" id="cAddress" class="form-control">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveCustomer()">حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal فاتورة مبيعات -->
+<div class="modal fade" id="saleModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">فاتورة مبيعات جديدة</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label">العميل</label>
+            <select id="saleCustomer" class="form-select">
+              <option value="">عميل نقدي</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">طريقة الدفع</label>
+            <select id="salePayment" class="form-select">
+              <option value="نقدي">نقدي</option>
+              <option value="آجل">آجل</option>
+              <option value="تحويل">تحويل</option>
+            </select>
+          </div>
+        </div>
+        <div id="saleItems"></div>
+        <button class="btn btn-outline-primary btn-sm mb-3" onclick="addSaleItem()">+ إضافة صنف</button>
+        <div class="d-flex justify-content-between align-items-center">
+          <h5>الإجمالي: <span id="saleTotal" class="price">0</span> ج.م</h5>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveSale()">حفظ الفاتورة</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal عرض فاتورة -->
+<div class="modal fade" id="viewSaleModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">تفاصيل الفاتورة</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="viewSaleBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-primary" id="btnExportPdf" onclick="exportInvoicePdf()"><i class="bi bi-file-pdf"></i> PDF</button>
+        <button class="btn btn-outline-warning" onclick="returnSale()"><i class="bi bi-arrow-return-left"></i> مرتجع</button>
+        <button class="btn btn-outline-danger" onclick="deleteSale()"><i class="bi bi-trash"></i> حذف</button>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal شراء -->
+<div class="modal fade" id="purchaseModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">فاتورة شراء جديدة</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">اسم المورد (اختياري)</label>
+          <input type="text" id="purchaseSupplier" class="form-control" placeholder="اسم المورد">
+        </div>
+        <div id="purchaseItems"></div>
+        <button class="btn btn-outline-primary btn-sm mb-3" onclick="addPurchaseItem()">+ إضافة صنف</button>
+        <div class="d-flex justify-content-between">
+          <h5>الإجمالي: <span id="purchaseTotal" class="price">0</span> ج.م</h5>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button class="btn btn-primary" onclick="savePurchase()">حفظ الفاتورة</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal سداد -->
+<div class="modal fade" id="payModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">تسجيل سداد</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="payCustomerId">
+        <p>العميل: <strong id="payCustomerName"></strong></p>
+        <p>المديونية الحالية: <strong id="payCurrentBalance" class="text-warning"></strong> ج.م</p>
+        <div class="mb-3">
+          <label class="form-label">المبلغ المدفوع *</label>
+          <input type="number" id="payAmount" class="form-control form-control-lg" step="0.01" min="0.01">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">ملاحظة</label>
+          <input type="text" id="payNote" class="form-control" placeholder="اختياري">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button class="btn btn-success" onclick="savePayment()">تأكيد السداد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal مصروف -->
+<div class="modal fade" id="expenseModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">إضافة مصروف</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">الوصف *</label>
+          <input type="text" id="expDesc" class="form-control" placeholder="مثال: إيجار / كهرباء / راتب">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">الفئة</label>
+          <select id="expCategory" class="form-select">
+            <option>إيجار</option>
+            <option>مرتبات</option>
+            <option>كهرباء ومياه</option>
+            <option>نقل وشحن</option>
+            <option>صيانة</option>
+            <option>مصروفات أخرى</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">المبلغ *</label>
+          <input type="number" id="expAmount" class="form-control form-control-lg" step="0.01" min="0.01">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveExpense()">حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+// ==================== البيانات ====================
+const DB_KEY = 'nds_accounting_v3';
+const USERS = {
+  admin: { pass: 'admin123', name: 'مدير النظام', role: 'admin' }
+};
+
+let db = { products: [], customers: [], sales: [], purchases: [], expenses: [], movements: [], nextIds: { product: 1, customer: 1, sale: 1, purchase: 1, expense: 1 } };
+let currentUser = null;
+
+// منتجات افتراضية من كتالوج نيو دنت
+const DEFAULT_PRODUCTS = [
+  {
+    "name": "نابكن",
+    "price": 80,
+    "cost": 55,
+    "stock": 50,
+    "min": 10,
+    "unit": "علبة"
+  },
+  {
+    "name": "رول تغليف",
+    "price": 150,
+    "cost": 100,
+    "stock": 30,
+    "min": 10,
+    "unit": "رول"
+  },
+  {
+    "name": "جوانتي لاتكس",
+    "price": 165,
+    "cost": 110,
+    "stock": 40,
+    "min": 15,
+    "unit": "علبة"
+  },
+  {
+    "name": "رول 7.5 سم",
+    "price": 300,
+    "cost": 210,
+    "stock": 20,
+    "min": 5,
+    "unit": "رول"
+  },
+  {
+    "name": "رول 10 سم",
+    "price": 400,
+    "cost": 280,
+    "stock": 15,
+    "min": 5,
+    "unit": "رول"
+  },
+  {
+    "name": "رول 5 سم",
+    "price": 200,
+    "cost": 140,
+    "stock": 20,
+    "min": 5,
+    "unit": "رول"
+  },
+  {
+    "name": "فرش تنظيف أدوات",
+    "price": 20,
+    "cost": 12,
+    "stock": 50,
+    "min": 15,
+    "unit": "قطعة"
+  },
+  {
+    "name": "جبس كوري",
+    "price": 70,
+    "cost": 45,
+    "stock": 40,
+    "min": 10,
+    "unit": "كيس"
+  },
+  {
+    "name": "جبس تايواني",
+    "price": 105,
+    "cost": 70,
+    "stock": 30,
+    "min": 10,
+    "unit": "كيس"
+  },
+  {
+    "name": "جبس تركي",
+    "price": 155,
+    "cost": 100,
+    "stock": 25,
+    "min": 8,
+    "unit": "كيس"
+  },
+  {
+    "name": "جبس مصري",
+    "price": 25,
+    "cost": 15,
+    "stock": 60,
+    "min": 20,
+    "unit": "كيس"
+  },
+  {
+    "name": "شمع نحت 5 قطع",
+    "price": 25,
+    "cost": 15,
+    "stock": 40,
+    "min": 10,
+    "unit": "علبة"
+  },
+  {
+    "name": "شمع أخضر كيمدنت",
+    "price": 40,
+    "cost": 25,
+    "stock": 30,
+    "min": 10,
+    "unit": "علبة"
+  },
+  {
+    "name": "رابر بيس زيتابلس",
+    "price": 2150,
+    "cost": 1500,
+    "stock": 10,
+    "min": 3,
+    "unit": "علبة"
+  },
+  {
+    "name": "رابر بيس سلاكسي",
+    "price": 1950,
+    "cost": 1360,
+    "stock": 10,
+    "min": 3,
+    "unit": "علبة"
+  },
+  {
+    "name": "الجنيت زيتالجين",
+    "price": 300,
+    "cost": 210,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "الجنيت تروبيكال",
+    "price": 435,
+    "cost": 300,
+    "stock": 20,
+    "min": 5,
+    "unit": "علبة"
+  },
+  {
+    "name": "الجنيت كيفكس",
+    "price": 490,
+    "cost": 340,
+    "stock": 20,
+    "min": 5,
+    "unit": "علبة"
+  },
+  {
+    "name": "الجنيت آي كيو",
+    "price": 325,
+    "cost": 225,
+    "stock": 20,
+    "min": 5,
+    "unit": "علبة"
+  },
+  {
+    "name": "الجنيت هيدروجم 5",
+    "price": 510,
+    "cost": 360,
+    "stock": 15,
+    "min": 5,
+    "unit": "علبة"
+  },
+  {
+    "name": "الجنيت بيازين",
+    "price": 165,
+    "cost": 110,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "الجنيت ماك",
+    "price": 185,
+    "cost": 125,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "بوند الترا 4 مل",
+    "price": 475,
+    "cost": 330,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بوند اسبايدنت 5 مل",
+    "price": 450,
+    "cost": 315,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بوند بيسكو 4 مل",
+    "price": 2200,
+    "cost": 1540,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بوند بيسكو 0.5 مل",
+    "price": 445,
+    "cost": 310,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بوند سي بوند 6 مل",
+    "price": 1300,
+    "cost": 910,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بوند تيترك إن",
+    "price": 2700,
+    "cost": 1890,
+    "stock": 5,
+    "min": 2,
+    "unit": "قطعة"
+  },
+  {
+    "name": "ميدسيم",
+    "price": 1820,
+    "cost": 1270,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "ميدفيل",
+    "price": 1690,
+    "cost": 1180,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "نوفا فيلنج",
+    "price": 725,
+    "cost": 500,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "نوفا لوتينج",
+    "price": 725,
+    "cost": 500,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "هان كور",
+    "price": 1600,
+    "cost": 1120,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "شارم تيمبوراري كراون",
+    "price": 1525,
+    "cost": 1060,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كيفكس أوتلاين",
+    "price": 1225,
+    "cost": 850,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أكروستون",
+    "price": 365,
+    "cost": 250,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حشو مؤقت جلاكسي",
+    "price": 75,
+    "cost": 50,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حشو مؤقت أورافيل",
+    "price": 195,
+    "cost": 135,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حشو مؤقت BMS",
+    "price": 190,
+    "cost": 130,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حشو مؤقت نوكافيل",
+    "price": 195,
+    "cost": 135,
+    "stock": 20,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حشو مؤقت ميتا",
+    "price": 200,
+    "cost": 140,
+    "stock": 20,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حشو مؤقت ليترك",
+    "price": 185,
+    "cost": 130,
+    "stock": 20,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حشو مؤقت تي فيل",
+    "price": 155,
+    "cost": 105,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع ADS",
+    "price": 195,
+    "cost": 135,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع دراما",
+    "price": 300,
+    "cost": 210,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع آي فاست",
+    "price": 165,
+    "cost": 115,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع هندي",
+    "price": 200,
+    "cost": 140,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع مصري",
+    "price": 90,
+    "cost": 60,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع روبي",
+    "price": 80,
+    "cost": 55,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع أمريكي",
+    "price": 300,
+    "cost": 210,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع BMS",
+    "price": 280,
+    "cost": 195,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "معجون تلميع بروفي",
+    "price": 185,
+    "cost": 130,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "إيدتا جل دولو",
+    "price": 70,
+    "cost": 45,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "زيكال",
+    "price": 500,
+    "cost": 350,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "زينكنول",
+    "price": 550,
+    "cost": 385,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "خيط جراحي",
+    "price": 25,
+    "cost": 15,
+    "stock": 50,
+    "min": 15,
+    "unit": "قطعة"
+  },
+  {
+    "name": "قطن المحلة",
+    "price": 100,
+    "cost": 65,
+    "stock": 30,
+    "min": 10,
+    "unit": "علبة"
+  },
+  {
+    "name": "قطن تابي",
+    "price": 55,
+    "cost": 35,
+    "stock": 35,
+    "min": 10,
+    "unit": "علبة"
+  },
+  {
+    "name": "قطن رول",
+    "price": 155,
+    "cost": 100,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "قطن رول مصري",
+    "price": 115,
+    "cost": 75,
+    "stock": 30,
+    "min": 10,
+    "unit": "علبة"
+  },
+  {
+    "name": "ماسك",
+    "price": 50,
+    "cost": 30,
+    "stock": 50,
+    "min": 20,
+    "unit": "علبة"
+  },
+  {
+    "name": "كلور هيكسيدين",
+    "price": 90,
+    "cost": 60,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "مطهر يونيجيت",
+    "price": 210,
+    "cost": 145,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "مطهر يونيسيد فورت",
+    "price": 320,
+    "cost": 220,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كحول",
+    "price": 70,
+    "cost": 45,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كوبايات",
+    "price": 30,
+    "cost": 18,
+    "stock": 50,
+    "min": 20,
+    "unit": "علبة"
+  },
+  {
+    "name": "سكشن مصري",
+    "price": 80,
+    "cost": 50,
+    "stock": 30,
+    "min": 10,
+    "unit": "علبة"
+  },
+  {
+    "name": "سكشن توب تاك",
+    "price": 120,
+    "cost": 80,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "سكشن إيطالي",
+    "price": 150,
+    "cost": 100,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "جاتا بيركا ميتا",
+    "price": 125,
+    "cost": 85,
+    "stock": 20,
+    "min": 5,
+    "unit": "علبة"
+  },
+  {
+    "name": "جاتا بيركا صيني",
+    "price": 80,
+    "cost": 50,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "بنج موضعي أمريكي",
+    "price": 100,
+    "cost": 70,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بنج موضعي توب كير",
+    "price": 40,
+    "cost": 25,
+    "stock": 40,
+    "min": 15,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بنج موضعي د. نمب",
+    "price": 60,
+    "cost": 40,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بنج موضعي سليبي توث",
+    "price": 75,
+    "cost": 50,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بنج موضعي د. توبيكال",
+    "price": 50,
+    "cost": 35,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "بنج موضعي كاندي بلس",
+    "price": 65,
+    "cost": 45,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أملجم إيطالي",
+    "price": 3250,
+    "cost": 2275,
+    "stock": 6,
+    "min": 2,
+    "unit": "علبة"
+  },
+  {
+    "name": "أملجم مصري",
+    "price": 2850,
+    "cost": 1990,
+    "stock": 6,
+    "min": 2,
+    "unit": "علبة"
+  },
+  {
+    "name": "إبر بنج إيطالي",
+    "price": 230,
+    "cost": 160,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "إبر بنج باندا",
+    "price": 200,
+    "cost": 140,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "إبر بنج ماك",
+    "price": 200,
+    "cost": 140,
+    "stock": 25,
+    "min": 8,
+    "unit": "علبة"
+  },
+  {
+    "name": "إبر بنج شينجكت",
+    "price": 250,
+    "cost": 175,
+    "stock": 20,
+    "min": 6,
+    "unit": "علبة"
+  },
+  {
+    "name": "إبر بنج دينجكت",
+    "price": 290,
+    "cost": 200,
+    "stock": 20,
+    "min": 6,
+    "unit": "علبة"
+  },
+  {
+    "name": "إبر بنج CK",
+    "price": 260,
+    "cost": 180,
+    "stock": 20,
+    "min": 6,
+    "unit": "علبة"
+  },
+  {
+    "name": "إبر بنج NOP",
+    "price": 260,
+    "cost": 180,
+    "stock": 20,
+    "min": 6,
+    "unit": "علبة"
+  },
+  {
+    "name": "رابر دام",
+    "price": 310,
+    "cost": 215,
+    "stock": 15,
+    "min": 5,
+    "unit": "علبة"
+  },
+  {
+    "name": "فلوبول دي فيل",
+    "price": 450,
+    "cost": 315,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول اسبايدنت",
+    "price": 300,
+    "cost": 210,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول نوفا",
+    "price": 275,
+    "cost": 190,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول ألماني",
+    "price": 375,
+    "cost": 260,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول باريون",
+    "price": 300,
+    "cost": 210,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول روبي",
+    "price": 175,
+    "cost": 120,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول ديا",
+    "price": 260,
+    "cost": 180,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول ميتا",
+    "price": 265,
+    "cost": 185,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول أني كوم",
+    "price": 300,
+    "cost": 210,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول كراون",
+    "price": 185,
+    "cost": 130,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول تي كوم",
+    "price": 180,
+    "cost": 125,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول ماكس فيل",
+    "price": 150,
+    "cost": 100,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول ميجا",
+    "price": 280,
+    "cost": 195,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول تي إيكونوم",
+    "price": 340,
+    "cost": 235,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول شارب",
+    "price": 250,
+    "cost": 175,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول هاي فيل",
+    "price": 120,
+    "cost": 80,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "فلوبول تيترك إن",
+    "price": 890,
+    "cost": 620,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت دي فيل",
+    "price": 450,
+    "cost": 315,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت مايرا",
+    "price": 700,
+    "cost": 490,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت باريون",
+    "price": 800,
+    "cost": 560,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت اسبايدنت",
+    "price": 445,
+    "cost": 310,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت نوفا",
+    "price": 510,
+    "cost": 355,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت آرت فيل",
+    "price": 310,
+    "cost": 215,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت كومبوسان",
+    "price": 725,
+    "cost": 500,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت شوفو",
+    "price": 1100,
+    "cost": 770,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت كراون فيل",
+    "price": 240,
+    "cost": 165,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت تي إيكونوم",
+    "price": 650,
+    "cost": 450,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت ألماني",
+    "price": 850,
+    "cost": 590,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت ديا فيل",
+    "price": 420,
+    "cost": 290,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت كيفكس",
+    "price": 650,
+    "cost": 450,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت تشامبيون",
+    "price": 850,
+    "cost": 590,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت زد فيل",
+    "price": 790,
+    "cost": 550,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت 3M",
+    "price": 1300,
+    "cost": 910,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت شوفو LS",
+    "price": 1200,
+    "cost": 840,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت روبي",
+    "price": 175,
+    "cost": 120,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت توكوياما",
+    "price": 990,
+    "cost": 690,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت ميتا",
+    "price": 290,
+    "cost": 200,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت DX",
+    "price": 530,
+    "cost": 370,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت أني كوم",
+    "price": 340,
+    "cost": 235,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت كاريزما",
+    "price": 590,
+    "cost": 410,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كومبوزت تيترك إن",
+    "price": 1300,
+    "cost": 910,
+    "stock": 8,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش ألماني",
+    "price": 185,
+    "cost": 130,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش ميتا",
+    "price": 120,
+    "cost": 80,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش اسبايدنت",
+    "price": 150,
+    "cost": 100,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش جلاكسي",
+    "price": 75,
+    "cost": 50,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش بلس",
+    "price": 50,
+    "cost": 30,
+    "stock": 35,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش ميجا",
+    "price": 100,
+    "cost": 65,
+    "stock": 25,
+    "min": 8,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش JK",
+    "price": 35,
+    "cost": 20,
+    "stock": 40,
+    "min": 15,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش DX",
+    "price": 150,
+    "cost": 100,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش DC",
+    "price": 40,
+    "cost": 25,
+    "stock": 35,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "أتش روبي",
+    "price": 65,
+    "cost": 40,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا أبل هاي",
+    "price": 1575,
+    "cost": 1100,
+    "stock": 5,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا وود بيكر",
+    "price": 2450,
+    "cost": 1715,
+    "stock": 4,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا بانا ماكس",
+    "price": 4800,
+    "cost": 3360,
+    "stock": 2,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا إكسبيدنت",
+    "price": 1500,
+    "cost": 1050,
+    "stock": 5,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا كوكسو",
+    "price": 2800,
+    "cost": 1960,
+    "stock": 3,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا فيجور LED",
+    "price": 2450,
+    "cost": 1715,
+    "stock": 3,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا لو كيت زيرو",
+    "price": 1875,
+    "cost": 1310,
+    "stock": 4,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا لو كيت أبل",
+    "price": 3280,
+    "cost": 2290,
+    "stock": 3,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا بلاستيك",
+    "price": 75,
+    "cost": 50,
+    "stock": 30,
+    "min": 10,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا WK LED",
+    "price": 2750,
+    "cost": 1920,
+    "stock": 3,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا ST دينتست",
+    "price": 950,
+    "cost": 660,
+    "stock": 5,
+    "min": 2,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا دنتا كويك",
+    "price": 1650,
+    "cost": 1150,
+    "stock": 4,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا دنتا كويك LED",
+    "price": 1950,
+    "cost": 1360,
+    "stock": 4,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا دينتست",
+    "price": 1650,
+    "cost": 1150,
+    "stock": 4,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا VRN T200",
+    "price": 3000,
+    "cost": 2100,
+    "stock": 3,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "كونترا VRN T100",
+    "price": 1950,
+    "cost": 1360,
+    "stock": 4,
+    "min": 1,
+    "unit": "قطعة"
+  },
+  {
+    "name": "زيت كونترا SKI",
+    "price": 155,
+    "cost": 100,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "زيت كونترا بوسكلين",
+    "price": 450,
+    "cost": 315,
+    "stock": 10,
+    "min": 3,
+    "unit": "قطعة"
+  },
+  {
+    "name": "زيت كونترا وينر",
+    "price": 115,
+    "cost": 75,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "زيت كونترا ماك",
+    "price": 325,
+    "cost": 225,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حامل كومبوزت",
+    "price": 275,
+    "cost": 190,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حامل فايلات",
+    "price": 100,
+    "cost": 65,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حامل بيرات",
+    "price": 150,
+    "cost": 100,
+    "stock": 15,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حامل سرنجات",
+    "price": 120,
+    "cost": 80,
+    "stock": 20,
+    "min": 5,
+    "unit": "قطعة"
+  },
+  {
+    "name": "حامل قطن رول",
+    "price": 250,
+    "cost": 170,
+    "stock": 12,
+    "min": 4,
+    "unit": "قطعة"
+  },
+  {
+    "name": "تيب بلاستيك إير وتر",
+    "price": 235,
+    "cost": 160,
+    "stock": 15,
+    "min": 5,
+    "unit": "علبة"
+  },
+  {
+    "name": "فرش بوند",
+    "price": 40,
+    "cost": 25,
+    "stock": 40,
+    "min": 15,
+    "unit": "علبة"
+  }
+];
+
+// ==================== التخزين ====================
+function loadDB() {
+  const raw = localStorage.getItem(DB_KEY);
+  if (raw) {
+    db = JSON.parse(raw);
+    if (!db.purchases) db.purchases = [];
+    if (!db.expenses) db.expenses = [];
+    if (!db.movements) db.movements = [];
+    if (!db.nextIds.purchase) db.nextIds.purchase = 1;
+    if (!db.nextIds.expense) db.nextIds.expense = 1;
+  } else {
+    // أول تشغيل: تحميل المنتجات الافتراضية
+    DEFAULT_PRODUCTS.forEach(p => {
+      db.products.push({
+        id: db.nextIds.product++,
+        name: p.name,
+        cost: p.cost,
+        price: p.price,
+        stock: p.stock,
+        min: p.min,
+        unit: p.unit,
+        active: true
+      });
+    });
+    saveDB();
+  }
+}
+
+function saveDB() {
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+// ==================== تسجيل الدخول ====================
+function doLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  
+  if (USERS[user] && USERS[user].pass === pass) {
+    currentUser = { username: user, ...USERS[user] };
+    sessionStorage.setItem('nds_user', JSON.stringify(currentUser));
+    err.classList.add('d-none');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('userLabel').textContent = currentUser.name;
+    loadDB();
+    showPage('dashboard');
+  } else {
+    err.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+    err.classList.remove('d-none');
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('nds_user');
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ==================== التنقل ====================
+const pageTitles = {
+  dashboard: 'الرئيسية',
+  products: 'المنتجات',
+  inventory: 'المخزون',
+  sales: 'المبيعات',
+  purchases: 'المشتريات',
+  customers: 'العملاء',
+  expenses: 'المصروفات',
+  reports: 'التقارير'
+};
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[page] || page;
+  
+  document.querySelectorAll('.bottom-nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+  
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'products') renderProducts();
+  if (page === 'inventory') renderInventory();
+  if (page === 'sales') renderSales();
+  if (page === 'purchases') renderPurchases();
+  if (page === 'customers') renderCustomers();
+  if (page === 'expenses') renderExpenses();
+  if (page === 'reports') renderReports();
+}
+
+// ==================== الرئيسية ====================
+function renderDashboard() {
+  const products = db.products.filter(p => p.active);
+  const low = products.filter(p => p.stock <= p.min);
+  const today = new Date().toISOString().slice(0, 10);
+  const todaySales = db.sales.filter(s => s.date.startsWith(today));
+  
+  document.getElementById('statProducts').textContent = products.length;
+  document.getElementById('statLowStock').textContent = low.length;
+  document.getElementById('statCustomers').textContent = db.customers.length;
+  document.getElementById('statTodaySales').textContent = todaySales.length;
+  
+  const list = document.getElementById('lowStockList');
+  if (low.length === 0) {
+    list.innerHTML = '<div class="empty-state"><i class="bi bi-check-circle"></i><p>لا يوجد منتجات ناقصة ✓</p></div>';
+  } else {
+    list.innerHTML = low.slice(0, 8).map(p => `
+      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+        <span>${p.name}</span>
+        <span class="badge text-bg-danger">${p.stock} ${p.unit}</span>
+      </div>
+    `).join('');
+  }
+}
+
+// ==================== المنتجات ====================
+function renderProducts() {
+  const q = (document.getElementById('productSearch')?.value || '').trim();
+  let list = db.products.filter(p => p.active);
+  if (q) list = list.filter(p => p.name.includes(q));
+  
+  const el = document.getElementById('productsList');
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="bi bi-box"></i><p>لا توجد منتجات</p></div>';
+    return;
+  }
+  el.innerHTML = list.map(p => `
+    <div class="product-item" onclick="editProduct(${p.id})">
+      <div>
+        <strong>${p.name}</strong>
+        <div class="text-muted" style="font-size:0.8rem">${p.unit} | تكلفة: ${p.cost}</div>
+      </div>
+      <div class="text-end">
+        <div class="price">${p.price} ج.م</div>
+        <span class="badge ${p.stock <= p.min ? 'text-bg-danger' : 'text-bg-success'}">${p.stock}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProductModal(id) {
+  document.getElementById('editProductId').value = '';
+  document.getElementById('productModalTitle').textContent = 'إضافة منتج';
+  document.getElementById('pName').value = '';
+  document.getElementById('pCost').value = 0;
+  document.getElementById('pPrice').value = 0;
+  document.getElementById('pStock').value = 0;
+  document.getElementById('pMin').value = 5;
+  document.getElementById('pUnit').value = 'قطعة';
+  new bootstrap.Modal(document.getElementById('productModal')).show();
+}
+
+function editProduct(id) {
+  const p = db.products.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('editProductId').value = id;
+  document.getElementById('productModalTitle').textContent = 'تعديل منتج';
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pCost').value = p.cost;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pStock').value = p.stock;
+  document.getElementById('pMin').value = p.min;
+  document.getElementById('pUnit').value = p.unit;
+  new bootstrap.Modal(document.getElementById('productModal')).show();
+}
+
+function saveProduct() {
+  const id = document.getElementById('editProductId').value;
+  const name = document.getElementById('pName').value.trim();
+  if (!name) return showToast('اكتب اسم المنتج');
+  
+  const data = {
+    name,
+    cost: parseFloat(document.getElementById('pCost').value) || 0,
+    price: parseFloat(document.getElementById('pPrice').value) || 0,
+    stock: parseFloat(document.getElementById('pStock').value) || 0,
+    min: parseFloat(document.getElementById('pMin').value) || 5,
+    unit: document.getElementById('pUnit').value || 'قطعة',
+    active: true
+  };
+  
+  if (id) {
+    const p = db.products.find(x => x.id === parseInt(id));
+    Object.assign(p, data);
+  } else {
+    data.id = db.nextIds.product++;
+    db.products.push(data);
+  }
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+  renderProducts();
+  showToast('تم الحفظ');
+}
+
+// ==================== المخزون ====================
+function renderInventory() {
+  const products = db.products.filter(p => p.active);
+  const sel = document.getElementById('invProduct');
+  sel.innerHTML = products.map(p => `<option value="${p.id}">${p.name} (${p.stock})</option>`).join('');
+  
+  const el = document.getElementById('inventoryList');
+  el.innerHTML = products.map(p => `
+    <div class="product-item">
+      <div>
+        <strong>${p.name}</strong>
+        <div class="text-muted" style="font-size:0.8rem">حد الطلب: ${p.min}</div>
+      </div>
+      <div class="text-end">
+        <span class="badge ${p.stock <= p.min ? 'text-bg-danger' : 'text-bg-success'} fs-6">${p.stock} ${p.unit}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function adjustStock() {
+  const id = parseInt(document.getElementById('invProduct').value);
+  const type = document.getElementById('invType').value;
+  const qty = parseFloat(document.getElementById('invQty').value);
+  if (!id || isNaN(qty)) return showToast('أدخل الكمية');
+  
+  const p = db.products.find(x => x.id === id);
+  if (!p) return;
+  
+  const before = p.stock;
+  if (type === 'in') p.stock += qty;
+  else if (type === 'out') p.stock = Math.max(0, p.stock - qty);
+  else p.stock = qty;
+  
+  if (!db.movements) db.movements = [];
+  db.movements.push({
+    productId: id, name: p.name, type, qty, before, after: p.stock,
+    date: new Date().toISOString()
+  });
+  
+  saveDB();
+  document.getElementById('invQty').value = '';
+  renderInventory();
+  showToast('تم تعديل الرصيد');
+}
+
+// ==================== العملاء ====================
+function renderCustomers() {
+  const el = document.getElementById('customersList');
+  if (db.customers.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="bi bi-people"></i><p>لا يوجد عملاء بعد</p></div>';
+    return;
+  }
+  el.innerHTML = db.customers.map(c => `
+    <div class="product-item">
+      <div>
+        <strong>${c.name}</strong>
+        <div class="text-muted" style="font-size:0.8rem">${c.phone || ''} ${c.address ? '— ' + c.address : ''}</div>
+      </div>
+      <div class="text-end">
+        ${(c.balance || 0) > 0
+          ? `<span class="badge text-bg-warning mb-1 d-block">${Number(c.balance).toFixed(2)} ج.م</span>
+             <button class="btn btn-sm btn-success" onclick="event.stopPropagation();openPayModal(${c.id})">سداد</button>`
+          : '<span class="badge text-bg-success">مسدد</span>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function openCustomerModal() {
+  document.getElementById('cName').value = '';
+  document.getElementById('cPhone').value = '';
+  document.getElementById('cAddress').value = '';
+  new bootstrap.Modal(document.getElementById('customerModal')).show();
+}
+
+function saveCustomer() {
+  const name = document.getElementById('cName').value.trim();
+  if (!name) return showToast('اكتب اسم العميل');
+  db.customers.push({
+    id: db.nextIds.customer++,
+    name,
+    phone: document.getElementById('cPhone').value.trim(),
+    address: document.getElementById('cAddress').value.trim(),
+    balance: 0
+  });
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('customerModal')).hide();
+  renderCustomers();
+  showToast('تم إضافة العميل');
+}
+
+// ==================== المبيعات ====================
+function renderSales() {
+  const el = document.getElementById('salesList');
+  const sales = [...db.sales].reverse();
+  if (sales.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="bi bi-receipt"></i><p>لا توجد فواتير بعد</p></div>';
+    return;
+  }
+  el.innerHTML = sales.map(s => {
+    const cust = db.customers.find(c => c.id === s.customerId);
+    return `
+      <div class="product-item" onclick="viewSale(${s.id})" style="${s.returned ? 'opacity:0.6' : ''}">
+        <div>
+          <strong>${s.number}</strong> ${s.returned ? '<span class="badge text-bg-secondary">مرتجع</span>' : ''}
+          <div class="text-muted" style="font-size:0.8rem">${cust ? cust.name : 'عميل نقدي'} — ${s.date.slice(0,10)}</div>
+        </div>
+        <div class="text-end">
+          <div class="price">${s.total} ج.م</div>
+          <span class="badge ${s.payment === 'آجل' ? 'text-bg-warning' : 'text-bg-success'}">${s.payment}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openSaleModal() {
+  const sel = document.getElementById('saleCustomer');
+  sel.innerHTML = '<option value="">عميل نقدي</option>' + 
+    db.customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('salePayment').value = 'نقدي';
+  document.getElementById('saleItems').innerHTML = '';
+  addSaleItem();
+  calcSaleTotal();
+  new bootstrap.Modal(document.getElementById('saleModal')).show();
+}
+
+function addSaleItem() {
+  const products = db.products.filter(p => p.active && p.stock > 0);
+  const opts = products.map(p => `<option value="${p.id}" data-price="${p.price}" data-stock="${p.stock}">${p.name} (${p.stock})</option>`).join('');
+  const div = document.createElement('div');
+  div.className = 'row g-2 mb-2 sale-item-row';
+  div.innerHTML = `
+    <div class="col-5">
+      <select class="form-select form-select-sm sale-product" onchange="onSaleProductChange(this)">
+        <option value="">اختر...</option>${opts}
+      </select>
+    </div>
+    <div class="col-2">
+      <input type="number" class="form-control form-control-sm sale-qty" value="1" min="0.01" step="0.01" onchange="calcSaleTotal()">
+    </div>
+    <div class="col-3">
+      <input type="number" class="form-control form-control-sm sale-price" step="0.01" onchange="calcSaleTotal()">
+    </div>
+    <div class="col-2">
+      <button class="btn btn-sm btn-outline-danger w-100" onclick="this.closest('.sale-item-row').remove();calcSaleTotal()">×</button>
+    </div>
+  `;
+  document.getElementById('saleItems').appendChild(div);
+}
+
+function onSaleProductChange(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  const row = sel.closest('.sale-item-row');
+  row.querySelector('.sale-price').value = opt.dataset.price || 0;
+  calcSaleTotal();
+}
+
+function calcSaleTotal() {
+  let total = 0;
+  document.querySelectorAll('.sale-item-row').forEach(row => {
+    const qty = parseFloat(row.querySelector('.sale-qty').value) || 0;
+    const price = parseFloat(row.querySelector('.sale-price').value) || 0;
+    total += qty * price;
+  });
+  document.getElementById('saleTotal').textContent = total.toFixed(2);
+}
+
+function saveSale() {
+  const items = [];
+  let total = 0;
+  let valid = true;
+  
+  document.querySelectorAll('.sale-item-row').forEach(row => {
+    const pid = parseInt(row.querySelector('.sale-product').value);
+    const qty = parseFloat(row.querySelector('.sale-qty').value) || 0;
+    const price = parseFloat(row.querySelector('.sale-price').value) || 0;
+    if (!pid || qty <= 0) return;
+    
+    const p = db.products.find(x => x.id === pid);
+    if (!p || p.stock < qty) {
+      showToast('رصيد غير كافٍ: ' + (p ? p.name : ''));
+      valid = false;
+      return;
+    }
+    items.push({ productId: pid, name: p.name, qty, price, total: qty * price });
+    total += qty * price;
+  });
+  
+  if (!valid || items.length === 0) return showToast('أضف أصناف صحيحة');
+  
+  // خصم المخزون
+  items.forEach(it => {
+    const p = db.products.find(x => x.id === it.productId);
+    p.stock -= it.qty;
+  });
+  
+  const customerId = document.getElementById('saleCustomer').value ? parseInt(document.getElementById('saleCustomer').value) : null;
+  const payment = document.getElementById('salePayment').value;
+  
+  // لو آجل: زيادة مديونية العميل
+  if (payment === 'آجل' && customerId) {
+    const c = db.customers.find(x => x.id === customerId);
+    if (c) c.balance = (c.balance || 0) + total;
+  }
+  
+  const sale = {
+    id: db.nextIds.sale++,
+    number: 'S-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(db.nextIds.sale).padStart(3,'0'),
+    customerId,
+    payment,
+    items,
+    total,
+    paid: payment === 'آجل' ? 0 : total,
+    date: new Date().toISOString()
+  };
+  db.sales.push(sale);
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('saleModal')).hide();
+  renderSales();
+  showToast('تم حفظ الفاتورة ' + sale.number);
+}
+
+let currentViewSale = null;
+
+function viewSale(id) {
+  const s = db.sales.find(x => x.id === id);
+  if (!s) return;
+  currentViewSale = s;
+  const cust = db.customers.find(c => c.id === s.customerId);
+  let html = `
+    <div class="text-center mb-3">
+      <h5 style="color:var(--primary)">نيو دنت — NDS</h5>
+      <small class="text-muted">بني مزار - المنيا - أبو قرقاص</small>
+    </div>
+    <p><strong>رقم الفاتورة:</strong> ${s.number}<br>
+    <strong>التاريخ:</strong> ${s.date.slice(0,16).replace('T',' ')}<br>
+    <strong>العميل:</strong> ${cust ? cust.name : 'عميل نقدي'}<br>
+    <strong>الدفع:</strong> ${s.payment}</p>
+    <table class="table table-sm table-bordered">
+      <thead><tr><th>الصنف</th><th>كمية</th><th>سعر</th><th>إجمالي</th></tr></thead>
+      <tbody>
+        ${s.items.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td><td>${i.total}</td></tr>`).join('')}
+      </tbody>
+      <tfoot><tr><th colspan="3">الإجمالي</th><th>${s.total} ج.م</th></tr></tfoot>
+    </table>
+  `;
+  document.getElementById('viewSaleBody').innerHTML = html;
+  new bootstrap.Modal(document.getElementById('viewSaleModal')).show();
+}
+
+function exportInvoicePdf() {
+  if (!currentViewSale) return showToast('لا توجد فاتورة');
+  const s = currentViewSale;
+  const cust = db.customers.find(c => c.id === s.customerId);
+  
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  
+  // Header
+  doc.setFontSize(18);
+  doc.setTextColor(13, 115, 119);
+  doc.text('New Dent - NDS', 105, 20, { align: 'center' });
+  doc.setFontSize(11);
+  doc.setTextColor(80);
+  doc.text('Dental Supplies', 105, 27, { align: 'center' });
+  doc.text('Bani Mazar - Minya - Abu Qurqas', 105, 33, { align: 'center' });
+  
+  doc.setDrawColor(13, 115, 119);
+  doc.setLineWidth(0.5);
+  doc.line(20, 38, 190, 38);
+  
+  // Invoice info
+  doc.setFontSize(12);
+  doc.setTextColor(0);
+  doc.text('Invoice: ' + s.number, 20, 48);
+  doc.text('Date: ' + s.date.slice(0, 16).replace('T', ' '), 20, 55);
+  doc.text('Customer: ' + (cust ? cust.name : 'Cash Customer'), 20, 62);
+  doc.text('Payment: ' + s.payment, 20, 69);
+  
+  // Table
+  const rows = s.items.map(i => [i.name, String(i.qty), String(i.price), String(i.total)]);
+  doc.autoTable({
+    startY: 78,
+    head: [['Product', 'Qty', 'Price', 'Total']],
+    body: rows,
+    foot: [['', '', 'Total', s.total + ' EGP']],
+    styles: { fontSize: 10, halign: 'center' },
+    headStyles: { fillColor: [13, 115, 119], textColor: 255 },
+    footStyles: { fillColor: [240, 247, 248], textColor: [13, 115, 119], fontStyle: 'bold' },
+    margin: { left: 20, right: 20 }
+  });
+  
+  const finalY = doc.lastAutoTable.finalY + 15;
+  doc.setFontSize(10);
+  doc.setTextColor(120);
+  doc.text('Thank you for dealing with New Dent', 105, finalY, { align: 'center' });
+  
+  doc.save(s.number + '.pdf');
+  showToast('تم تصدير PDF');
+}
+
+// ==================== التقارير ====================
+function filterByPeriod(items, dateField) {
+  const period = document.getElementById('reportPeriod')?.value || 'all';
+  if (period === 'all') return items;
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const month = today.slice(0, 7);
+  return items.filter(x => {
+    const d = (x[dateField] || '').slice(0, 10);
+    if (period === 'today') return d === today;
+    if (period === 'month') return d.startsWith(month);
+    return true;
+  });
+}
+
+function renderReports() {
+  const low = db.products.filter(p => p.active && p.stock <= p.min);
+  const lowEl = document.getElementById('reportLowStock');
+  if (lowEl) {
+    lowEl.innerHTML = low.length === 0
+      ? '<p class="text-muted mb-0">لا يوجد</p>'
+      : low.map(p => `<div class="d-flex justify-content-between py-1 border-bottom"><span>${p.name}</span><span class="badge text-bg-danger">${p.stock}</span></div>`).join('');
+  }
+  
+  const sales = filterByPeriod(db.sales || [], 'date');
+  const purchases = filterByPeriod(db.purchases || [], 'date');
+  const expenses = filterByPeriod(db.expenses || [], 'date');
+  
+  let revenue = 0, costOfGoods = 0;
+  sales.forEach(s => {
+    if (s.returned) return;
+    (s.items || []).forEach(it => {
+      revenue += it.total;
+      const p = db.products.find(x => x.id === it.productId);
+      costOfGoods += (p ? (p.cost || 0) : 0) * it.qty;
+    });
+  });
+  const totalPurchases = purchases.reduce((s, x) => s + x.total, 0);
+  const totalExpenses = expenses.reduce((s, x) => s + x.amount, 0);
+  const grossProfit = revenue - costOfGoods;
+  const netProfit = grossProfit - totalExpenses;
+  const debt = db.customers.reduce((s, c) => s + (c.balance || 0), 0);
+  
+  const profitEl = document.getElementById('reportProfit');
+  if (profitEl) {
+    profitEl.innerHTML = `
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>المبيعات</span><strong>${revenue.toFixed(2)}</strong></div>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>تكلفة البضاعة المباعة</span><strong>${costOfGoods.toFixed(2)}</strong></div>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>مجمل الربح</span><strong class="text-success">${grossProfit.toFixed(2)}</strong></div>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>المشتريات</span><strong>${totalPurchases.toFixed(2)}</strong></div>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>المصروفات</span><strong class="text-danger">${totalExpenses.toFixed(2)}</strong></div>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>المديونيات</span><strong class="text-warning">${debt.toFixed(2)}</strong></div>
+      <div class="d-flex justify-content-between py-2"><span>صافي الربح</span><strong class="price" style="font-size:1.25rem">${netProfit.toFixed(2)} ج.م</strong></div>
+    `;
+  }
+  
+  const salesEl = document.getElementById('reportSales');
+  if (salesEl) {
+    salesEl.innerHTML = `
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>عدد الفواتير</span><strong>${sales.filter(s=>!s.returned).length}</strong></div>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>إجمالي المبيعات</span><strong class="price">${revenue.toFixed(2)} ج.م</strong></div>
+      <div class="d-flex justify-content-between py-2"><span>عدد المرتجعات</span><strong>${sales.filter(s=>s.returned).length}</strong></div>
+    `;
+  }
+}
+
+// ==================== مساعدات ====================
+
+// ==================== المشتريات ====================
+function renderPurchases() {
+  if (!db.purchases) db.purchases = [];
+  const el = document.getElementById('purchasesList');
+  const list = [...db.purchases].reverse();
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="bi bi-cart-plus"></i><p>لا توجد فواتير مشتريات بعد</p></div>';
+    return;
+  }
+  el.innerHTML = list.map(p => `
+    <div class="product-item">
+      <div>
+        <strong>${p.number}</strong>
+        <div class="text-muted" style="font-size:0.8rem">${p.supplier || 'بدون مورد'} — ${p.date.slice(0,10)}</div>
+      </div>
+      <div class="text-end">
+        <div class="price">${p.total} ج.م</div>
+        <small class="text-muted">${p.items.length} صنف</small>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openPurchaseModal() {
+  document.getElementById('purchaseSupplier').value = '';
+  document.getElementById('purchaseItems').innerHTML = '';
+  addPurchaseItem();
+  calcPurchaseTotal();
+  new bootstrap.Modal(document.getElementById('purchaseModal')).show();
+}
+
+function addPurchaseItem() {
+  const products = db.products.filter(p => p.active);
+  const opts = products.map(p => `<option value="${p.id}" data-cost="${p.cost}">${p.name}</option>`).join('');
+  const div = document.createElement('div');
+  div.className = 'row g-2 mb-2 purchase-item-row';
+  div.innerHTML = `
+    <div class="col-5">
+      <select class="form-select form-select-sm purchase-product" onchange="onPurchaseProductChange(this)">
+        <option value="">اختر...</option>${opts}
+      </select>
+    </div>
+    <div class="col-2">
+      <input type="number" class="form-control form-control-sm purchase-qty" value="1" min="0.01" step="0.01" onchange="calcPurchaseTotal()">
+    </div>
+    <div class="col-3">
+      <input type="number" class="form-control form-control-sm purchase-cost" step="0.01" onchange="calcPurchaseTotal()" placeholder="التكلفة">
+    </div>
+    <div class="col-2">
+      <button class="btn btn-sm btn-outline-danger w-100" onclick="this.closest('.purchase-item-row').remove();calcPurchaseTotal()">×</button>
+    </div>
+  `;
+  document.getElementById('purchaseItems').appendChild(div);
+}
+
+function onPurchaseProductChange(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  const row = sel.closest('.purchase-item-row');
+  row.querySelector('.purchase-cost').value = opt.dataset.cost || 0;
+  calcPurchaseTotal();
+}
+
+function calcPurchaseTotal() {
+  let total = 0;
+  document.querySelectorAll('.purchase-item-row').forEach(row => {
+    const qty = parseFloat(row.querySelector('.purchase-qty').value) || 0;
+    const cost = parseFloat(row.querySelector('.purchase-cost').value) || 0;
+    total += qty * cost;
+  });
+  document.getElementById('purchaseTotal').textContent = total.toFixed(2);
+}
+
+function savePurchase() {
+  if (!db.purchases) db.purchases = [];
+  if (!db.nextIds.purchase) db.nextIds.purchase = 1;
+  
+  const items = [];
+  let total = 0;
+  
+  document.querySelectorAll('.purchase-item-row').forEach(row => {
+    const pid = parseInt(row.querySelector('.purchase-product').value);
+    const qty = parseFloat(row.querySelector('.purchase-qty').value) || 0;
+    const cost = parseFloat(row.querySelector('.purchase-cost').value) || 0;
+    if (!pid || qty <= 0) return;
+    
+    const p = db.products.find(x => x.id === pid);
+    if (!p) return;
+    
+    items.push({ productId: pid, name: p.name, qty, cost, total: qty * cost });
+    total += qty * cost;
+    
+    // زيادة المخزون وتحديث التكلفة
+    p.stock += qty;
+    if (cost > 0) p.cost = cost;
+  });
+  
+  if (items.length === 0) return showToast('أضف أصناف صحيحة');
+  
+  const purchase = {
+    id: db.nextIds.purchase++,
+    number: 'P-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(db.nextIds.purchase).padStart(3,'0'),
+    supplier: document.getElementById('purchaseSupplier').value.trim(),
+    items,
+    total,
+    date: new Date().toISOString()
+  };
+  db.purchases.push(purchase);
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('purchaseModal')).hide();
+  renderPurchases();
+  showToast('تم حفظ فاتورة الشراء ' + purchase.number);
+}
+
+// ==================== سداد العملاء ====================
+function openPayModal(customerId) {
+  const c = db.customers.find(x => x.id === customerId);
+  if (!c) return;
+  document.getElementById('payCustomerId').value = customerId;
+  document.getElementById('payCustomerName').textContent = c.name;
+  document.getElementById('payCurrentBalance').textContent = Number(c.balance || 0).toFixed(2);
+  document.getElementById('payAmount').value = c.balance || '';
+  document.getElementById('payNote').value = '';
+  new bootstrap.Modal(document.getElementById('payModal')).show();
+}
+
+function savePayment() {
+  const id = parseInt(document.getElementById('payCustomerId').value);
+  const amount = parseFloat(document.getElementById('payAmount').value);
+  const c = db.customers.find(x => x.id === id);
+  if (!c || isNaN(amount) || amount <= 0) return showToast('أدخل مبلغ صحيح');
+  
+  const bal = c.balance || 0;
+  if (amount > bal) return showToast('المبلغ أكبر من المديونية');
+  
+  c.balance = Math.max(0, bal - amount);
+  if (!c.payments) c.payments = [];
+  c.payments.push({
+    amount,
+    note: document.getElementById('payNote').value.trim(),
+    date: new Date().toISOString()
+  });
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('payModal')).hide();
+  renderCustomers();
+  showToast('تم تسجيل السداد: ' + amount.toFixed(2) + ' ج.م');
+}
+
+// ==================== النسخ الاحتياطي ====================
+function exportBackup() {
+  const data = JSON.stringify(db, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'nds-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('تم تصدير النسخة الاحتياطية');
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.products || !data.nextIds) throw new Error('ملف غير صالح');
+      if (!confirm('سيتم استبدال كل البيانات الحالية. متأكد؟')) return;
+      db = data;
+      if (!db.purchases) db.purchases = [];
+      saveDB();
+      showPage('dashboard');
+      showToast('تم استيراد النسخة بنجاح');
+    } catch (err) {
+      showToast('فشل الاستيراد: ملف غير صحيح');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+
+
+// ==================== المصروفات ====================
+function renderExpenses() {
+  if (!db.expenses) db.expenses = [];
+  const el = document.getElementById('expensesList');
+  const list = [...db.expenses].reverse();
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="bi bi-wallet2"></i><p>لا توجد مصروفات بعد</p></div>';
+    return;
+  }
+  el.innerHTML = list.map(e => `
+    <div class="product-item">
+      <div>
+        <strong>${e.desc}</strong>
+        <div class="text-muted" style="font-size:0.8rem">${e.category} — ${e.date.slice(0,10)}</div>
+      </div>
+      <div class="text-end">
+        <div class="text-danger fw-bold">${e.amount} ج.م</div>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${e.id})">حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openExpenseModal() {
+  document.getElementById('expDesc').value = '';
+  document.getElementById('expAmount').value = '';
+  document.getElementById('expCategory').selectedIndex = 0;
+  new bootstrap.Modal(document.getElementById('expenseModal')).show();
+}
+
+function saveExpense() {
+  if (!db.expenses) db.expenses = [];
+  if (!db.nextIds.expense) db.nextIds.expense = 1;
+  const desc = document.getElementById('expDesc').value.trim();
+  const amount = parseFloat(document.getElementById('expAmount').value);
+  if (!desc || isNaN(amount) || amount <= 0) return showToast('أكمل البيانات');
+  db.expenses.push({
+    id: db.nextIds.expense++,
+    desc,
+    category: document.getElementById('expCategory').value,
+    amount,
+    date: new Date().toISOString()
+  });
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('expenseModal')).hide();
+  renderExpenses();
+  showToast('تم إضافة المصروف');
+}
+
+function deleteExpense(id) {
+  if (!confirm('حذف هذا المصروف؟')) return;
+  db.expenses = db.expenses.filter(e => e.id !== id);
+  saveDB();
+  renderExpenses();
+  showToast('تم الحذف');
+}
+
+// ==================== مرتجع وحذف فاتورة ====================
+function returnSale() {
+  if (!currentViewSale) return;
+  if (currentViewSale.returned) return showToast('الفاتورة مرتجعة مسبقاً');
+  if (!confirm('تأكيد مرتجع الفاتورة؟ سيتم إرجاع الكمية للمخزون')) return;
+  
+  const s = currentViewSale;
+  s.items.forEach(it => {
+    const p = db.products.find(x => x.id === it.productId);
+    if (p) p.stock += it.qty;
+  });
+  // لو كانت آجل: تقليل مديونية العميل
+  if (s.payment === 'آجل' && s.customerId) {
+    const c = db.customers.find(x => x.id === s.customerId);
+    if (c) c.balance = Math.max(0, (c.balance || 0) - s.total);
+  }
+  s.returned = true;
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('viewSaleModal')).hide();
+  renderSales();
+  showToast('تم عمل مرتجع للفاتورة');
+}
+
+function deleteSale() {
+  if (!currentViewSale) return;
+  if (!confirm('حذف الفاتورة نهائياً؟ سيتم إرجاع الكمية للمخزون')) return;
+  const s = currentViewSale;
+  if (!s.returned) {
+    s.items.forEach(it => {
+      const p = db.products.find(x => x.id === it.productId);
+      if (p) p.stock += it.qty;
+    });
+    if (s.payment === 'آجل' && s.customerId) {
+      const c = db.customers.find(x => x.id === s.customerId);
+      if (c) c.balance = Math.max(0, (c.balance || 0) - s.total);
+    }
+  }
+  db.sales = db.sales.filter(x => x.id !== s.id);
+  saveDB();
+  bootstrap.Modal.getInstance(document.getElementById('viewSaleModal')).hide();
+  renderSales();
+  showToast('تم حذف الفاتورة');
+}
+
+function resetAllData() {
+  if (!confirm('سيتم مسح كل البيانات وإعادة تحميل المنتجات الافتراضية. متأكد؟')) return;
+  if (!confirm('تأكيد نهائي: لا يمكن التراجع!')) return;
+  localStorage.removeItem(DB_KEY);
+  db = { products: [], customers: [], sales: [], purchases: [], expenses: [], movements: [], nextIds: { product: 1, customer: 1, sale: 1, purchase: 1, expense: 1 } };
+  loadDB();
+  showPage('dashboard');
+  showToast('تم إعادة التعيين');
+}
+
+
+function showToast(msg) {
+  document.getElementById('toastMsg').textContent = msg;
+  const t = new bootstrap.Toast(document.getElementById('toast'), { delay: 2000 });
+  t.show();
+}
+
+// بدء التشغيل
+(function init() {
+  const saved = sessionStorage.getItem('nds_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('userLabel').textContent = currentUser.name;
+    loadDB();
+    showPage('dashboard');
+  }
+})();
+</script>
+</body>
+</html>
